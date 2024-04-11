@@ -89,5 +89,38 @@ sumasParciales = scanl1 (+)
 sumaAlt :: Num a => [a] -> a
 sumaAlt l = fst $ foldr (\x (acc1,acc2) -> if acc2 then (acc1+x,False) else (acc1-x,True) ) ((reverse l !! 0),False) (init l) 
 
+sumaAltPiza :: Num a => [a] -> a
+sumaAltPiza = foldr (-) 0
 
-sumaAlt2::? 
+--sumaAlt2::? 
+
+
+-- ej 4: -
+
+-- ej 5: -
+
+{-
+Ejercicio 6 ⋆
+El siguiente esquema captura la recursión primitiva sobre listas.
+recr :: (a -> [a] -> b -> b) -> b -> [a] -> b
+recr _ z [] = z
+recr f z (x : xs) = f x xs (recr f z xs)
+a. Definir la función sacarUna :: Eq a => a -> [a] -> [a], que dados un elemento y una lista devuelve el
+resultado de eliminar de la lista la primera aparición del elemento (si está presente).
+b. Explicar por qué el esquema de recursión estructural (foldr) no es adecuado para implementar la función
+sacarUna del punto anterior.
+c. Definr la función insertarOrdenado :: Ord a => a -> [a] -> [a] que inserta un elemento en una lista
+ordenada (de manera creciente), de manera que se preserva el ordenamiento.
+-}
+
+recr :: (a -> [a] -> b -> b) -> b -> [a] -> b
+recr f z []       = z
+recr f z (x : xs) = f x xs (recr f z xs)
+
+sacarPrimera:: Eq a => a -> [a] -> [a]
+sacarPrimera e = recr (\x xs rec -> if e == x then xs else x:rec) [] 
+
+-- b: Porque con foldr no sabes cuando parar
+
+insertarOrdenado :: Ord a => a -> [a] -> [a]
+insertarOrdenado e = recr (\x xs rec -> if e < x then e:x:xs else if xs == [] then x:rec ++ [e] else x:rec) [] 
