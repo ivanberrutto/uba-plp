@@ -14,6 +14,7 @@ i. ¿Cuál es el tipo de cada función? (Suponer que todos los números son de t
 ii. Indicar cuáles de las funciones anteriores no están currificadas. Para cada una de ellas, definir la función
 currificada correspondiente. Recordar dar el tipo de la función.
 -}
+{-
 max2 :: (Float,Float) -> Float
 normaVectorial :: (Float,Float) -> Float
 subtract :: Float -> Float -> Float
@@ -21,6 +22,7 @@ predecesor :: Float -> Float
 evaluarEnCero :: (Float -> b) -> b
 dosVeces :: (a -> b) -> c
 flipAll :: ([a] -> [b]-> c) ->  [b] -> [a]-> c
+-}
 
 {-
 Ejercicio 2 ⋆
@@ -59,3 +61,30 @@ v. Hacer lo mismo que en el punto anterior, pero en sentido inverso (el último 
 etc.). Pensar qué esquema de recursión conviene usar en este caso.
 
 -}
+
+misum :: [Float] -> Float
+misum s = foldr (\acc x -> acc + x) 0 s
+
+misum2 :: [Int] -> Int
+misum2 s = foldr (+) 0 s
+
+mielem :: Eq a => a -> [a] -> Bool
+mielem e s = foldr (\x acc -> acc || e==x) False s
+
+mimasmas :: [a] -> [a] -> [a]
+mimasmas s1 s2 = foldr(\x acc -> x:acc) s2 s1
+
+mifilter :: (a -> Bool) -> [a] -> [a]
+mifilter f s = foldr(\x acc -> if f x  then x:acc else acc) [] s
+
+mimap :: (a -> b) -> [a] -> [b] 
+mimap f s = foldr(\x acc -> (f x):acc) [] s
+
+mejorSegun :: (a -> a -> Bool) -> [a] -> a
+mejorSegun f s = foldr1 (\x acc -> if (f x acc) then x else acc) s
+
+sumasParciales :: Num a => [a] -> [a]
+sumasParciales = scanl1 (+)
+
+sumaAlt :: Num a => [a] -> a
+sumaAlt l = fst $ foldr (\x (acc1,acc2) -> if acc2 then (acc1+x,False) else (acc1-x,True) ) ((reverse l !! 0),False) (init l)  
