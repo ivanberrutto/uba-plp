@@ -87,4 +87,7 @@ sumasParciales :: Num a => [a] -> [a]
 sumasParciales = scanl1 (+)
 
 sumaAlt :: Num a => [a] -> a
-sumaAlt l = fst $ foldr (\x (acc1,acc2) -> if acc2 then (acc1+x,False) else (acc1-x,True) ) ((reverse l !! 0),False) (init l)  
+sumaAlt l = fst $ foldr (\x (acc1,acc2) -> if acc2 then (acc1+x,False) else (acc1-x,True) ) ((reverse l !! 0),False) (init l) 
+
+
+sumaAlt2::? 
