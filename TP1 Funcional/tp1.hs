@@ -106,8 +106,29 @@ es_una_gema o = isPrefixOf "Gema de" (nombre_objeto o)
 
 {-Ejercicio 1-}
 
-foldPersonaje :: ?
-foldPersonaje = ?
+{-
+data Dirección = Norte | Sur | Este | Oeste
+  deriving (Eq, Show)
+type Posición = (Float, Float)
+
+data Personaje = Personaje Posición String  -- posición inicial, nombre
+  | Mueve Personaje Dirección               -- personaje que se mueve, dirección en la que se mueve
+  | Muere Personaje                         -- personaje que muere
+  deriving (Eq, Show)
+data Objeto = Objeto Posición String        -- posición inicial, nombre
+  | Tomado Objeto Personaje                 -- objeto que es tomado, personaje que lo tomó
+  | EsDestruido Objeto                      -- objeto que es destruido
+  deriving (Eq, Show)
+type Universo = [Either Personaje Objeto]
+-}
+
+foldPoli :: b -> (a -> b) -> (b -> b -> b) -> (b -> b -> b) -> Polinomio a -> b
+
+foldPersonaje ::  ( b -> Posición -> String -> b ) {-Personaje Posicion String-} -> ( b -> b -> Dirección -> b ) {-Mueve Personaje Direccion-} -> ( b -> b)  {-Muere Personaje-}-> Personaje -> b 
+foldPersonaje pjbase pjmueve pjmuere pj = case pj of
+    Personaje p -> persona
+    Mueve p dir -> siguiente_posición p dir
+    Muere p -> moricion p
 
 foldObjeto :: ?
 foldObjeto = ?

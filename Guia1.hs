@@ -124,3 +124,44 @@ sacarPrimera e = recr (\x xs rec -> if e == x then xs else x:rec) []
 
 insertarOrdenado :: Ord a => a -> [a] -> [a]
 insertarOrdenado e = recr (\x xs rec -> if e < x then e:x:xs else if xs == [] then x:rec ++ [e] else x:rec) [] 
+
+{-
+Ejercicio 8 ⋆
+Definir las siguientes funciones para trabajar sobre listas, y dar su tipo. Todas ellas deben poder aplicarse a
+listas finitas e infinitas.
+i. mapPares, una versión de map que toma una función currificada de dos argumentos y una lista de pares
+de valores, y devuelve la lista de aplicaciones de la función a cada par. Pista: recordar curry y uncurry.
+ii. armarPares, que dadas dos listas arma una lista de pares que contiene, en cada posición, el elemento
+correspondiente a esa posición en cada una de las listas. Si una de las listas es más larga que la otra,
+ignorar los elementos que sobran (el resultado tendrá la longitud de la lista más corta). Esta función en
+Haskell se llama zip. Pista: aprovechar la currificación y utilizar evaluación parcial.
+iii. mapDoble, una variante de mapPares, que toma una función currificada de dos argumentos y dos listas
+(de igual longitud), y devuelve una lista de aplicaciones de la función a cada elemento correspondiente de
+las dos listas. Esta función en Haskell se llama zipWith.
+
+
+-
+
+-}
+
+
+{-
+Ejercicio 10 ⋆
+Definimos la función generate, que genera listas en base a un predicado y una función, de la siguiente manera:
+generate :: ([a] -> Bool) -> ([a] -> a) -> [a]
+generate stop next = generateFrom stop next []
+generateFrom:: ([a] -> Bool) -> ([a] -> a) -> [a] -> [a]
+generateFrom stop next xs | stop xs = init xs
+| otherwise = generateFrom stop next (xs ++ [next xs])
+i. Usando generate, definir generateBase::([a] -> Bool) -> a -> (a -> a) -> [a], similar a
+generate, pero con un caso base para el elemento inicial, y una función que, en lugar de calcular el siguiente
+elemento en base a la lista completa, lo calcula a partir del último elemento. Por ejemplo: generateBase
+(\l->not (null l) && (last l > 256)) 1 (*2) es la lista las potencias de 2 menores o iguales que 256.
+ii. Usando generate, definir factoriales::Int -> [Int], que dado un entero n genera la lista de los
+primeros n factoriales.
+iii. Usando generateBase, definir iterateN :: Int -> (a -> a) -> a -> [a] que, toma un entero n, una
+función f y un elemento inicial x, y devuelve la lista [x, f x, f (f x), ..., f ( ...(f x) ...)] de
+longitud n. Nota: iterateN n f x = take n (iterate f x).
+iv. Redefinir generateFrom usando iterate y takeWhile.
+-}
+
