@@ -165,3 +165,7 @@ longitud n. Nota: iterateN n f x = take n (iterate f x).
 iv. Redefinir generateFrom usando iterate y takeWhile.
 -}
 
+{-
+Ejercicio 11
+
+-}

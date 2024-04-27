@@ -120,6 +120,9 @@ data Objeto = Objeto Posición String        -- posición inicial, nombre
   | EsDestruido Objeto                      -- objeto que es destruido
   deriving (Eq, Show)
 type Universo = [Either Personaje Objeto]
+
+nombre_personaje :: Personaje -> String
+nombre_personaje = foldPersonaje (const id) const id
 -}
 
 foldPoli :: b -> (a -> b) -> (b -> b -> b) -> (b -> b -> b) -> Polinomio a -> b
@@ -129,7 +132,7 @@ foldPersonaje pjbase pjmueve pjmuere pj = case pj of
     Personaje p -> persona
     Mueve p dir -> siguiente_posición p dir
     Muere p -> moricion p
-
+{-
 foldObjeto :: ?
 foldObjeto = ?
 
@@ -169,7 +172,7 @@ tiene_thanos_todas_las_gemas = ?
 
 podemos_ganarle_a_thanos :: ?
 podemos_ganarle_a_thanos = ?
-
+-}
 {-Tests-}
 
 main :: IO Counts
