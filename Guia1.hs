@@ -167,5 +167,44 @@ iv. Redefinir generateFrom usando iterate y takeWhile.
 
 {-
 Ejercicio 11
+Ejercicio 11 ⋆
+i. Denir y dar el tipo del esquema de recursión foldNat sobre los naturales. Utilizar el tipo Integer de
+Haskell (la función va a estar denida sólo para los enteros mayores o iguales que 0).
+ii. Utilizando foldNat, denir la función potencia.
+-} 
+data Nat  = Zero | Succ Nat 
 
+
+foldNat :: (a -> a) -> a -> Integer -> a
+foldNat f z 0 = z
+foldNat f z n = f (foldNat f z (n - 1))
+
+potencia :: Integer -> Integer -> Integer
+potencia x n = foldNat (\acc -> x * acc) 1 n
+
+{-
+Ejercicio 13 ⋆
+Considerar el siguiente tipo, que representa a los árboles binarios:
+data AB a = Nil | Bin (AB a) a (AB a)
+i. Usando recursión explícita, denir los esquemas de recursión estructural (foldAB) y primitiva (recAB), y
+dar sus tipos.
+ii. Denir las funciones esNil, altura y cantNodos (para esNil puede utilizarse case en lugar de foldAB
+o recAB).
 -}
+
+data AB a = Nil | Bin (AB a) a (AB a)
+{-
+foldAB ::  b -> (b -> a -> b -> b) -> AB a -> b
+foldAB cNil cAB arbol = case arbol of
+	Nil -> cNil
+	Bin izq r der -> cAB (rec izq) r (rec der)
+	where rec = foldAB cNil cAB 
+-}
+recAB :: (a -> AB -> AB -> b) -> b -> AB -> b 
+recAB f1 f2 arbol = case arbol of
+	Bin r izq der -> f1 r izq der (rec izq) (rec der)
+	Nil -> f2
+  where rec = recAB f1 f2
+
+foldAB :: (a -> b -> b -> b) -> b -> AB a -> b 
+foldAB f1 f2 = recAB (\a _ _ -> f1 a) f2
