@@ -17,9 +17,12 @@ maxlista([X,XS], X) :- maxlista(XS,Z), Z =< X.
 maxlista([X,XS], Y) :- maxlista(XS,Y), X =< Y.
 
 %% prefijo(?P , +L) donde S es el prefijo de la lista L
-prefijo([],[_]).
-prefijo([X],[X]).
+%prefijo([],[_]).
+%prefijo([X],[X]).
 prefijo([X],[X|_]).
 prefijo([X|XS],[Y|YS]) :- prefijo(XS,YS) , X=Y.
 
-
+%% sufijo(?S, +L), donde S es sufijo de la lista L.
+%sufijo([],[_]).
+%sufijo([X],[X]).
+sufijo(X,Y) :- reverse(Y,Z), prefijo(Z2,Z) , reverse(Z2,X) .
