@@ -26,3 +26,10 @@ prefijo([X|XS],[Y|YS]) :- prefijo(XS,YS) , X=Y.
 %sufijo([],[_]).
 %sufijo([X],[X]).
 sufijo(X,Y) :- reverse(Y,Z), prefijo(Z2,Z) , reverse(Z2,X) .
+
+
+%pertenece(?X, +L), que es verdadero sii el elemento X se encuentra en la lista L. (Este predicado ya vienedefinido en Prolog y se llama member).
+
+%pertenece(X,[X]).
+pertenece(X,[X|_]).
+pertenece(Y,[_|XS]) :- pertenece(Y,XS).
