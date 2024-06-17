@@ -10,9 +10,16 @@ reverse([],[]).
 reverse([X|XS],Y) :- mismaLongitud([X|XS],Y), reverse(XS,Z), append(Z, [X] , Y).
 
 
-%% maxlista(+L , -M) , minlista(+L, -M) donde M es el maximo/minimo de cada lista.
+%% maxlista(+L , -M)  donde M es el maximo de cada lista.
 
 maxlista([ X ] , X) .
 maxlista([X,XS], X) :- maxlista(XS,Z), Z =< X.
 maxlista([X,XS], Y) :- maxlista(XS,Y), X =< Y.
+
+%% prefijo(?P , +L) donde S es el prefijo de la lista L
+prefijo([],[_]).
+prefijo([X],[X]).
+prefijo([X],[X|_]).
+prefijo([X|XS],[Y|YS]) :- prefijo(XS,YS) , X=Y.
+
 
