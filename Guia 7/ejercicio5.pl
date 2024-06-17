@@ -12,3 +12,7 @@ reverse([X|XS],Y) :- mismaLongitud([X|XS],Y), reverse(XS,Z), append(Z, [X] , Y).
 
 %% maxlista(+L , -M) , minlista(+L, -M) donde M es el maximo/minimo de cada lista.
 
+maxlista([ X ] , X) .
+maxlista([X,XS], X) :- maxlista(XS,Z), Z =< X.
+maxlista([X,XS], Y) :- maxlista(XS,Y), X =< Y.
+
