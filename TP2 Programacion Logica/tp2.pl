@@ -26,12 +26,16 @@ tablero(F,C,[X|XS]):- length([X|XS],F) , tablero(F1 , C , XS) , X = X1 , lista(C
 %% Ejercicio 2
 %% ocupar(+Pos,?Tablero) será verdadero cuando la posición indicada esté ocupada.
 
+elementoTablero(pos(0,0),[[X|_]|_],X).
+elementoTablero(pos(0,C),[[_|XS]|YS],E):- 0 \= C , C1 is C-1 , elementoTablero(pos(0,C1),[XS|YS],E) .
+elementoTablero(pos(F,C),[_|XS],E):- 0 \= F ,  F1 is F-1 , elementoTablero(pos(F1,C),XS,E).
+
+ocupar(pos(F,C),T) :- elementoTablero(pos(F,C),T,ocupada).
+/*
 ocupar(pos(0,0),[[ocupada|_]|_]) .
 ocupar(pos(0,C),[[_|XS]|YS]):- 0 \= C , C1 is C-1 , ocupar(pos(0,C1),[XS|YS]) .
 ocupar(pos(F,C),[_|XS]):- 0 \= F ,  F1 is F-1 , ocupar(pos(F1,C),XS).
-
-
-
+*/
 
 
 
@@ -49,8 +53,8 @@ entre(X,Y,Z) :- X < Y, X2 is X+1, entre(X2,Y,Z).
 
 vecino(pos(X,Y),[T|Ts],pos(F,Y)):- F is X+1, length([T|Ts],P), between(0,P,F).
 vecino(pos(X,Y),[T|Ts],pos(F,Y)):- F is X-1, length([T|Ts],P), between(0,P,F).
-vecino(pos(X,Y),[T|Ts],pos(X,J)):- J is Y+1, length([T|Ts],P), between(0,P,J).
-vecino(pos(X,Y),[T|Ts],pos(X,J)):- J is Y-1, length([T|Ts],P), between(0,P,J).
+vecino(pos(X,Y),[T|_],pos(X,J)):- J is Y+1, length(T,P), between(0,P,J).
+vecino(pos(X,Y),[T|_],pos(X,J)):- J is Y-1, length(T,P), between(0,P,J).
 /*
 vecino(pos(F,C),[X|XS],pos(FV,CV)) :- 
 vecino(pos(F,C),[X|XS],pos(FV,CV)) :- entre(Fmenos1,Fmas1,FV) , entre(Cmenos1,Cmas1,CV),
@@ -66,11 +70,15 @@ vecino(pos(F,C),[X|XS],pos(FV,CV)) :- entre(Fmenos1,Fmas1,FV) , entre(Cmenos1,Cm
 
 
 
-/* comento todo 
 %% Ejercicio 4
 %% vecinoLibre(+Pos, +Tablero, -PosVecino) idem vecino/3 pero además PosVecino
 %% debe ser una celda transitable (no ocupada) en el Tablero
-vecinoLibre(_,_,_).
+vecinoLibre(pos(X,Y),[T|Ts],pos(F,Y)):- F is X+1, length([T|Ts],P), between(0,P,F) , elementoTablero(pos(F,Y),[T|Ts],E),var(E).
+vecinoLibre(pos(X,Y),[T|Ts],pos(F,Y)):- F is X-1, length([T|Ts],P), between(0,P,F) , elementoTablero(pos(F,Y),[T|Ts],E),var(E).
+vecinoLibre(pos(X,Y),[T|Ts],pos(X,J)):- J is Y-1, length(T,P), between(0,P,J) , elementoTablero(pos(X,J),[T|Ts],E),var(E).
+vecinoLibre(pos(X,Y),[T|Ts],pos(X,J)):- J is Y+1, length(T,P), between(0,P,J) , elementoTablero(pos(X,J),[T|Ts],E),var(E).
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 %% Definicion de caminos
@@ -84,7 +92,18 @@ vecinoLibre(_,_,_).
 %% Notar que la cantidad de caminos es finita y por ende se tiene que poder recorrer
 %% todas las alternativas eventualmente.
 %% Consejo: Utilizar una lista auxiliar con las posiciones visitadas
-camino(_,_,_,_).
+visitadas(T,[],V).
+visitadas(T,C,[]).
+visitadas(T,[C:CS],[C:VS]) :-  visitadas(T,CS,VS).
+
+camino(F,F,T,C). 
+camino(I,F,T,C) :-   vecinoLibre(I,T,V) , not(member(V,Visitas))  , visitadas(T,C,Visitas)  , camino(V,F,T,C).
+
+
+
+
+
+/* comento todo 
 
 %% 5.1. Analizar la reversibilidad de los parámetros Fin y Camino justificando adecuadamente en cada
 %% caso por qué el predicado se comporta como lo hace
