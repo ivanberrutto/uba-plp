@@ -42,10 +42,17 @@ ocupar(pos(F,C),[_|XS]):- 0 \= F ,  F1 is F-1 , ocupar(pos(F1,C),XS).
 %% dado que el robot se moverá en forma ortogonal.
 
 %between(I,F,N).
+head([H|_], H).
 
 entre(X,Y,X) :- X =< Y.
 entre(X,Y,Z) :- X < Y, X2 is X+1, entre(X2,Y,Z). 
 
+vecino(pos(X,Y),[T|Ts],pos(F,Y)):- F is X+1, length([T|Ts],P), between(0,P,F).
+vecino(pos(X,Y),[T|Ts],pos(F,Y)):- F is X-1, length([T|Ts],P), between(0,P,F).
+vecino(pos(X,Y),[T|Ts],pos(X,J)):- J is Y+1, length([T|Ts],P), between(0,P,J).
+vecino(pos(X,Y),[T|Ts],pos(X,J)):- J is Y-1, length([T|Ts],P), between(0,P,J).
+/*
+vecino(pos(F,C),[X|XS],pos(FV,CV)) :- 
 vecino(pos(F,C),[X|XS],pos(FV,CV)) :- entre(Fmenos1,Fmas1,FV) , entre(Cmenos1,Cmas1,CV),
                                       entre(0,LargoF,FV) , entre(0,LargoC,CV) ,
                                       Fmas1 is F+1 , Fmenos1 is F-1 , 
@@ -53,7 +60,7 @@ vecino(pos(F,C),[X|XS],pos(FV,CV)) :- entre(Fmenos1,Fmas1,FV) , entre(Cmenos1,Cm
                                       Fmas1 is F+1 , Fmenos1 is F-1 ,
                                       length([X|XS],LargoF) , length(X,LargoC).
 
-
+*/
 
 
 
