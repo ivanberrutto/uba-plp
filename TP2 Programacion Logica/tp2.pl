@@ -5,7 +5,17 @@
 %% Ejercicio 1
 %% tablero(+Filas,+Columnas,-Tablero) instancia una estructura de tablero en blanco
 %% de Filas x Columnas, con todas las celdas libres.
-tablero(_,_,_).
+/*
+lista(N,L):- length(L, N), maplist(=(_),L) .
+tablero(F,C,T):- length(T,F) , maplist(=(Z),T) , lista(C,Z) .
+*/
+lista(0,[]).
+lista(N,[X|XS]):- length([X|XS], N), lista(Z ,XS) , X= _ , Z is N-1 .
+
+tablero(0,_,[]).
+tablero(F,C,[X|XS]):- length([X|XS],F) , tablero(F1 , C , XS) , X = X1 , lista(C,X1) , F1 is F-1 .
+
+/* comento todo 
 
 %% Ejercicio 2
 %% ocupar(+Pos,?Tablero) será verdadero cuando la posición indicada esté ocupada.
@@ -102,3 +112,5 @@ tests(todos) :-
   tests(caminoDual).
 
 tests :- tests(todos).
+
+*/
