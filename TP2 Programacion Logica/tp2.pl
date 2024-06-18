@@ -9,25 +9,57 @@
 lista(N,L):- length(L, N), maplist(=(_),L) .
 tablero(F,C,T):- length(T,F) , maplist(=(Z),T) , lista(C,Z) .
 */
+%% Ejemplo para usar 
+tablero(ej5x5, T) :- tablero(5, 5, T),ocupar(pos(1, 1), T),ocupar(pos(1, 2), T).
+tablero(libre20, T) :- tablero(20, 20, T).
+
+
 lista(0,[]).
 lista(N,[X|XS]):- length([X|XS], N), lista(Z ,XS) , X= _ , Z is N-1 .
 
 tablero(0,_,[]).
 tablero(F,C,[X|XS]):- length([X|XS],F) , tablero(F1 , C , XS) , X = X1 , lista(C,X1) , F1 is F-1 .
 
-/* comento todo 
+
+
 
 %% Ejercicio 2
 %% ocupar(+Pos,?Tablero) será verdadero cuando la posición indicada esté ocupada.
-ocupar(_,_).
+
+ocupar(pos(0,0),[[ocupada|_]|_]) .
+ocupar(pos(0,C),[[_|XS]|YS]):- 0 \= C , C1 is C-1 , ocupar(pos(0,C1),[XS|YS]) .
+ocupar(pos(F,C),[_|XS]):- 0 \= F ,  F1 is F-1 , ocupar(pos(F1,C),XS).
+
+
+
+
+
 
 %% Ejercicio 3
 %% vecino(+Pos, +Tablero, -PosVecino) será verdadero cuando PosVecino sea
 %% un átomo de la forma pos(F', C') y pos(F',C') sea una celda contigua a
 %% pos(F,C), donde Pos=pos(F,C). Las celdas contiguas puede ser a lo sumo cuatro
 %% dado que el robot se moverá en forma ortogonal.
-vecino(_,_,_).
 
+%between(I,F,N).
+
+entre(X,Y,X) :- X =< Y.
+entre(X,Y,Z) :- X < Y, X2 is X+1, entre(X2,Y,Z). 
+
+vecino(pos(F,C),[X|XS],pos(FV,CV)) :- entre(Fmenos1,Fmas1,FV) , entre(Cmenos1,Cmas1,CV),
+                                      entre(0,LargoF,FV) , entre(0,LargoC,CV) ,
+                                      Fmas1 is F+1 , Fmenos1 is F-1 , 
+                                      Cmas1 is C+1 , Cmenos1 is C-1 , 
+                                      Fmas1 is F+1 , Fmenos1 is F-1 ,
+                                      length([X|XS],LargoF) , length(X,LargoC).
+
+
+
+
+
+
+
+/* comento todo 
 %% Ejercicio 4
 %% vecinoLibre(+Pos, +Tablero, -PosVecino) idem vecino/3 pero además PosVecino
 %% debe ser una celda transitable (no ocupada) en el Tablero
