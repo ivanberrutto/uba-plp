@@ -46,10 +46,8 @@ ocupar(pos(F,C),[_|XS]):- 0 \= F ,  F1 is F-1 , ocupar(pos(F1,C),XS).
 %% dado que el robot se moverá en forma ortogonal.
 
 %between(I,F,N).
-head([H|_], H).
+%head([H|_], H).
 
-entre(X,Y,X) :- X =< Y.
-entre(X,Y,Z) :- X < Y, X2 is X+1, entre(X2,Y,Z). 
 
 vecino(pos(X,Y),[T|Ts],pos(F,Y)):- F is X+1, length([T|Ts],P), between(0,P,F).
 vecino(pos(X,Y),[T|Ts],pos(F,Y)):- F is X-1, length([T|Ts],P), between(0,P,F).
@@ -73,11 +71,16 @@ vecino(pos(F,C),[X|XS],pos(FV,CV)) :- entre(Fmenos1,Fmas1,FV) , entre(Cmenos1,Cm
 %% Ejercicio 4
 %% vecinoLibre(+Pos, +Tablero, -PosVecino) idem vecino/3 pero además PosVecino
 %% debe ser una celda transitable (no ocupada) en el Tablero
+
+vecinoLibre(pos(X,Y),[T|Ts],pos(F,Y)):- vecino(pos(X,Y),[T|Ts],pos(F,Y)) , elementoTablero(pos(F,Y),[T|Ts],E),var(E).
+vecinoLibre(pos(X,Y),[T|Ts],pos(X,J)):- vecino(pos(X,Y),[T|Ts],pos(X,J)) , elementoTablero(pos(X,J),[T|Ts],E),var(E).
+
+/*
 vecinoLibre(pos(X,Y),[T|Ts],pos(F,Y)):- F is X+1, length([T|Ts],P), between(0,P,F) , elementoTablero(pos(F,Y),[T|Ts],E),var(E).
 vecinoLibre(pos(X,Y),[T|Ts],pos(F,Y)):- F is X-1, length([T|Ts],P), between(0,P,F) , elementoTablero(pos(F,Y),[T|Ts],E),var(E).
 vecinoLibre(pos(X,Y),[T|Ts],pos(X,J)):- J is Y-1, length(T,P), between(0,P,J) , elementoTablero(pos(X,J),[T|Ts],E),var(E).
 vecinoLibre(pos(X,Y),[T|Ts],pos(X,J)):- J is Y+1, length(T,P), between(0,P,J) , elementoTablero(pos(X,J),[T|Ts],E),var(E).
-
+*/
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,12 +95,24 @@ vecinoLibre(pos(X,Y),[T|Ts],pos(X,J)):- J is Y+1, length(T,P), between(0,P,J) , 
 %% Notar que la cantidad de caminos es finita y por ende se tiene que poder recorrer
 %% todas las alternativas eventualmente.
 %% Consejo: Utilizar una lista auxiliar con las posiciones visitadas
+/* no funca
 visitadas(T,[],V).
 visitadas(T,C,[]).
 visitadas(T,[C:CS],[C:VS]) :-  visitadas(T,CS,VS).
 
 camino(F,F,T,C). 
-camino(I,F,T,C) :-   vecinoLibre(I,T,V) , not(member(V,Visitas))  , visitadas(T,C,Visitas)  , camino(V,F,T,C).
+camino(I,F,T,C) :-   vecinoLibre(I,T,V) , Z = T, ocupar(I,Z), camino(V,F,Z,C).
+*/
+
+duplicate(List):-
+ append(X,Y,List),
+ member(M,X),
+ member(M,Y).
+last([ X ], X).
+last((_|T),Y) :- last(T,Y).
+
+camino(F,F,T,[]).
+camino(CH,F,T,[CH | CT]) :-  member(E1, [CH | CT]) , member(E2, [CH | CT]) , vecinoLibre(E1,T,E2) , not(duplicate([CH | CT])) , last([CH | CT],F).
 
 
 
