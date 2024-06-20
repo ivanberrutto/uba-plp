@@ -5,10 +5,7 @@
 %% Ejercicio 1
 %% tablero(+Filas,+Columnas,-Tablero) instancia una estructura de tablero en blanco
 %% de Filas x Columnas, con todas las celdas libres.
-/*
-lista(N,L):- length(L, N), maplist(=(_),L) .
-tablero(F,C,T):- length(T,F) , maplist(=(Z),T) , lista(C,Z) .
-*/
+
 %% Ejemplo para usar 
 tablero(ej5x5, T) :- tablero(5, 5, T),ocupar(pos(1, 1), T),ocupar(pos(1, 2), T).
 tablero(libre20, T) :- tablero(20, 20, T).
@@ -53,18 +50,6 @@ vecino(pos(X,Y),[T|Ts],pos(F,Y)):- F is X+1, length([T|Ts],P), between(0,P,F).
 vecino(pos(X,Y),[T|Ts],pos(F,Y)):- F is X-1, length([T|Ts],P), between(0,P,F).
 vecino(pos(X,Y),[T|_],pos(X,J)):- J is Y+1, length(T,P), between(0,P,J).
 vecino(pos(X,Y),[T|_],pos(X,J)):- J is Y-1, length(T,P), between(0,P,J).
-/*
-vecino(pos(F,C),[X|XS],pos(FV,CV)) :- 
-vecino(pos(F,C),[X|XS],pos(FV,CV)) :- entre(Fmenos1,Fmas1,FV) , entre(Cmenos1,Cmas1,CV),
-                                      entre(0,LargoF,FV) , entre(0,LargoC,CV) ,
-                                      Fmas1 is F+1 , Fmenos1 is F-1 , 
-                                      Cmas1 is C+1 , Cmenos1 is C-1 , 
-                                      Fmas1 is F+1 , Fmenos1 is F-1 ,
-                                      length([X|XS],LargoF) , length(X,LargoC).
-
-*/
-
-
 
 
 
@@ -72,8 +57,8 @@ vecino(pos(F,C),[X|XS],pos(FV,CV)) :- entre(Fmenos1,Fmas1,FV) , entre(Cmenos1,Cm
 %% vecinoLibre(+Pos, +Tablero, -PosVecino) idem vecino/3 pero además PosVecino
 %% debe ser una celda transitable (no ocupada) en el Tablero
 
-vecinoLibre(pos(X,Y),[T|Ts],pos(F,Y)):- vecino(pos(X,Y),[T|Ts],pos(F,Y)) , elementoTablero(pos(F,Y),[T|Ts],E),var(E).
-vecinoLibre(pos(X,Y),[T|Ts],pos(X,J)):- vecino(pos(X,Y),[T|Ts],pos(X,J)) , elementoTablero(pos(X,J),[T|Ts],E),var(E).
+vecinoLibre(pos(X,Y),[T|Ts],V):- vecino(pos(X,Y),[T|Ts],V) , elementoTablero(V,[T|Ts],E),var(E).
+%vecinoLibre(pos(X,Y),[T|Ts],pos(X,J)):- vecino(pos(X,Y),[T|Ts],pos(X,J)) , elementoTablero(pos(X,J),[T|Ts],E),var(E).
 
 /*
 vecinoLibre(pos(X,Y),[T|Ts],pos(F,Y)):- F is X+1, length([T|Ts],P), between(0,P,F) , elementoTablero(pos(F,Y),[T|Ts],E),var(E).
@@ -95,25 +80,6 @@ vecinoLibre(pos(X,Y),[T|Ts],pos(X,J)):- J is Y+1, length(T,P), between(0,P,J) , 
 %% Notar que la cantidad de caminos es finita y por ende se tiene que poder recorrer
 %% todas las alternativas eventualmente.
 %% Consejo: Utilizar una lista auxiliar con las posiciones visitadas
-/* no funca
-visitadas(T,[],V).
-visitadas(T,C,[]).
-visitadas(T,[C:CS],[C:VS]) :-  visitadas(T,CS,VS).
-
-camino(F,F,T,C). 
-camino(I,F,T,C) :-   vecinoLibre(I,T,V) , Z = T, ocupar(I,Z), camino(V,F,Z,C).
-*/
-
-duplicate(List):-
- append(X,Y,List),
- member(M,X),
- member(M,Y).
-last([ X ], X).
-last((_|T),Y) :- last(T,Y).
-
-camino(F,F,T,[]).
-camino(CH,F,T,[CH | CT]) :-  member(E1, [CH | CT]) , member(E2, [CH | CT]) , vecinoLibre(E1,T,E2) , not(duplicate([CH | CT])) , last([CH | CT],F).
-
 
 
 
