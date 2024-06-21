@@ -81,7 +81,39 @@ vecinoLibre(pos(X,Y),[T|Ts],pos(X,J)):- J is Y+1, length(T,P), between(0,P,J) , 
 %% todas las alternativas eventualmente.
 %% Consejo: Utilizar una lista auxiliar con las posiciones visitadas
 
+caminoValido(F,F,_,V,[]):- length(V,X) , X = 1.
+caminoValido(F,F,_,_,[]).
+caminoValido(I,F,T,V,[P|C]):- not(I=F),vecinoLibre(I,T,P),not(member(P,V)),caminoValido(P,F,T,[P|V],C).
+camino(I,I,_,[]).
+camino(I,F,T,[I|C]):- caminoValido(I,F,T,[I],C).
 
+%% Ejercicio 6
+%% camino2(+Inicio, +Fin, +Tablero, -Camino) ídem camino/4 pero que las soluciones
+%% se instancien en orden creciente de longitud.
+
+% Agregar longitudes para poder ordenar
+agregar_longitud(Sublista, Longitud-Sublista) :- 
+    length(Sublista, Longitud).
+
+% Recuperar lista original
+quitar_longitud(_-Sublista, Sublista).
+
+% Ordeno las soluciones segun la cantidad de pasos que hicieron
+ordenar_por_longitud(ListaDeListas, ListaOrdenada) :-
+    maplist(agregar_longitud, ListaDeListas, ListaConLongitud),
+    sort(1, @=<, ListaConLongitud, ListaOrdenadaConLongitud),
+    maplist(quitar_longitud, ListaOrdenadaConLongitud, ListaOrdenada).
+
+camino2(I,I,_,[]).
+camino2(I,F,T,[I|C]):- findall(X,caminoValido(I,F,T,[I],X),L), ordenar_por_longitud(L,LS) , member(C,LS).
+
+
+
+%% Ejercicio 7
+%% caminoOptimo(+Inicio, +Fin, +Tablero, -Camino) será verdadero cuando Camino sea un
+%% camino óptimo sobre Tablero entre Inicio y Fin. Notar que puede no ser único.
+
+caminoOptimo(I,F,T,C):- camino(I,F,T,C), not((camino(I,F,T,C1) ,length(C,A),length(C1,B),B<A)).
 
 
 /* comento todo 
@@ -91,19 +123,13 @@ vecinoLibre(pos(X,Y),[T|Ts],pos(X,J)):- J is Y+1, length(T,P), between(0,P,J) , 
 
 
 
-%% Ejercicio 6
-%% camino2(+Inicio, +Fin, +Tablero, -Camino) ídem camino/4 pero que las soluciones
-%% se instancien en orden creciente de longitud.
-camino2(_,_,_,_).
+
 
 %% 6.1. Analizar la reversibilidad de los parámetros Inicio y Camino justificando adecuadamente en
 %% cada caso por qué el predicado se comporta como lo hace.
 
 
-%% Ejercicio 7
-%% caminoOptimo(+Inicio, +Fin, +Tablero, -Camino) será verdadero cuando Camino sea un
-%% camino óptimo sobre Tablero entre Inicio y Fin. Notar que puede no ser único.
-caminoOptimo(_,_,_,_).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 %% Tableros simultáneos
