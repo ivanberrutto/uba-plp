@@ -10,6 +10,9 @@
 tablero(ej5x5, T) :- tablero(5, 5, T),ocupar(pos(1, 1), T),ocupar(pos(1, 2), T).
 tablero(libre20, T) :- tablero(20, 20, T).
 
+% para el ej 8
+tablero(ej5x52, T) :- tablero(5, 5, T),ocupar(pos(0, 2), T),ocupar(pos(2,1), T),ocupar(pos(3,1), T),ocupar(pos(3,2), T),ocupar(pos(3,3), T).
+
 
 lista(0,[]).
 lista(N,[X|XS]):- length([X|XS], N), lista(Z ,XS) , X= _ , Z is N-1 .
@@ -87,6 +90,11 @@ caminoValido(I,F,T,V,[P|C]):- not(I=F),vecinoLibre(I,T,P),not(member(P,V)),camin
 camino(I,I,_,[]).
 camino(I,F,T,[I|C]):- caminoValido(I,F,T,[I],C).
 
+%% 5.1. Analizar la reversibilidad de los parámetros Fin y Camino justificando adecuadamente en cada
+%% caso por qué el predicado se comporta como lo hace
+
+
+
 %% Ejercicio 6
 %% camino2(+Inicio, +Fin, +Tablero, -Camino) ídem camino/4 pero que las soluciones
 %% se instancien en orden creciente de longitud.
@@ -107,6 +115,8 @@ ordenar_por_longitud(ListaDeListas, ListaOrdenada) :-
 camino2(I,I,_,[]).
 camino2(I,F,T,[I|C]):- findall(X,caminoValido(I,F,T,[I],X),L), ordenar_por_longitud(L,LS) , member(C,LS).
 
+%% 6.1. Analizar la reversibilidad de los parámetros Inicio y Camino justificando adecuadamente en
+%% cada caso por qué el predicado se comporta como lo hace.
 
 
 %% Ejercicio 7
@@ -114,22 +124,6 @@ camino2(I,F,T,[I|C]):- findall(X,caminoValido(I,F,T,[I],X),L), ordenar_por_longi
 %% camino óptimo sobre Tablero entre Inicio y Fin. Notar que puede no ser único.
 
 caminoOptimo(I,F,T,C):- camino(I,F,T,C), not((camino(I,F,T,C1) ,length(C,A),length(C1,B),B<A)).
-
-
-/* comento todo 
-
-%% 5.1. Analizar la reversibilidad de los parámetros Fin y Camino justificando adecuadamente en cada
-%% caso por qué el predicado se comporta como lo hace
-
-
-
-
-
-%% 6.1. Analizar la reversibilidad de los parámetros Inicio y Camino justificando adecuadamente en
-%% cada caso por qué el predicado se comporta como lo hace.
-
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 %% Tableros simultáneos
@@ -139,7 +133,13 @@ caminoOptimo(I,F,T,C):- camino(I,F,T,C), not((camino(I,F,T,C1) ,length(C,A),leng
 %% caminoDual(+Inicio, +Fin, +Tablero1, +Tablero2, -Camino) será verdadero
 %% cuando Camino sea un camino desde Inicio hasta Fin pasando al mismo tiempo
 %% sólo por celdas transitables de ambos tableros.
-caminoDual(_,_,_,_,_).
+caminoDual(I, F , T1 , T2 , C):- camino(I,F,T1,C) , camino(I,F,T2,C).
+
+
+
+/* comento todo 
+
+
 
 %%%%%%%%
 %% TESTS
