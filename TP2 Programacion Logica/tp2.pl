@@ -6,21 +6,11 @@
 %% tablero(+Filas,+Columnas,-Tablero) instancia una estructura de tablero en blanco
 %% de Filas x Columnas, con todas las celdas libres.
 
-%% Ejemplo para usar 
-tablero(ej5x5, T) :- tablero(5, 5, T),ocupar(pos(1, 1), T),ocupar(pos(1, 2), T).
-tablero(libre20, T) :- tablero(20, 20, T).
-
-% para el ej 8
-tablero(ej5x52, T) :- tablero(5, 5, T),ocupar(pos(0, 2), T),ocupar(pos(2,1), T),ocupar(pos(3,1), T),ocupar(pos(3,2), T),ocupar(pos(3,3), T).
-
-
 lista(0,[]).
 lista(N,[X|XS]):- length([X|XS], N), lista(Z ,XS) , X= _ , Z is N-1 .
 
 tablero(0,_,[]).
 tablero(F,C,[X|XS]):- length([X|XS],F) , tablero(F1 , C , XS) , X = X1 , lista(C,X1) , F1 is F-1 .
-
-
 
 
 %% Ejercicio 2
@@ -31,13 +21,6 @@ elementoTablero(pos(0,C),[[_|XS]|YS],E):- 0 \= C , C1 is C-1 , elementoTablero(p
 elementoTablero(pos(F,C),[_|XS],E):- 0 \= F ,  F1 is F-1 , elementoTablero(pos(F1,C),XS,E).
 
 ocupar(pos(F,C),T) :- elementoTablero(pos(F,C),T,ocupada).
-/*
-ocupar(pos(0,0),[[ocupada|_]|_]) .
-ocupar(pos(0,C),[[_|XS]|YS]):- 0 \= C , C1 is C-1 , ocupar(pos(0,C1),[XS|YS]) .
-ocupar(pos(F,C),[_|XS]):- 0 \= F ,  F1 is F-1 , ocupar(pos(F1,C),XS).
-*/
-
-
 
 %% Ejercicio 3
 %% vecino(+Pos, +Tablero, -PosVecino) será verdadero cuando PosVecino sea
@@ -45,31 +28,17 @@ ocupar(pos(F,C),[_|XS]):- 0 \= F ,  F1 is F-1 , ocupar(pos(F1,C),XS).
 %% pos(F,C), donde Pos=pos(F,C). Las celdas contiguas puede ser a lo sumo cuatro
 %% dado que el robot se moverá en forma ortogonal.
 
-%between(I,F,N).
-%head([H|_], H).
-
-
 vecino(pos(X,Y),[T|Ts],pos(F,Y)):- F is X+1, length([T|Ts],P), between(0,P,F).
 vecino(pos(X,Y),[T|Ts],pos(F,Y)):- F is X-1, length([T|Ts],P), between(0,P,F).
 vecino(pos(X,Y),[T|_],pos(X,J)):- J is Y+1, length(T,P), between(0,P,J).
 vecino(pos(X,Y),[T|_],pos(X,J)):- J is Y-1, length(T,P), between(0,P,J).
 
 
-
 %% Ejercicio 4
 %% vecinoLibre(+Pos, +Tablero, -PosVecino) idem vecino/3 pero además PosVecino
 %% debe ser una celda transitable (no ocupada) en el Tablero
 
-vecinoLibre(pos(X,Y),[T|Ts],V):- vecino(pos(X,Y),[T|Ts],V) , elementoTablero(V,[T|Ts],E),var(E).
-%vecinoLibre(pos(X,Y),[T|Ts],pos(X,J)):- vecino(pos(X,Y),[T|Ts],pos(X,J)) , elementoTablero(pos(X,J),[T|Ts],E),var(E).
-
-/*
-vecinoLibre(pos(X,Y),[T|Ts],pos(F,Y)):- F is X+1, length([T|Ts],P), between(0,P,F) , elementoTablero(pos(F,Y),[T|Ts],E),var(E).
-vecinoLibre(pos(X,Y),[T|Ts],pos(F,Y)):- F is X-1, length([T|Ts],P), between(0,P,F) , elementoTablero(pos(F,Y),[T|Ts],E),var(E).
-vecinoLibre(pos(X,Y),[T|Ts],pos(X,J)):- J is Y-1, length(T,P), between(0,P,J) , elementoTablero(pos(X,J),[T|Ts],E),var(E).
-vecinoLibre(pos(X,Y),[T|Ts],pos(X,J)):- J is Y+1, length(T,P), between(0,P,J) , elementoTablero(pos(X,J),[T|Ts],E),var(E).
-*/
-
+vecinoLibre(pos(X,Y),[T|Ts],V) :- vecino(pos(X,Y),[T|Ts],V) , elementoTablero(V,[T|Ts],E),var(E).
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 %% Definicion de caminos
@@ -93,31 +62,34 @@ camino(I,F,T,[I|C]):- caminoValido(I,F,T,[I],C).
 %% 5.1. Analizar la reversibilidad de los parámetros Fin y Camino justificando adecuadamente en cada
 %% caso por qué el predicado se comporta como lo hace
 
-
+% ...
 
 %% Ejercicio 6
 %% camino2(+Inicio, +Fin, +Tablero, -Camino) ídem camino/4 pero que las soluciones
 %% se instancien en orden creciente de longitud.
 
-% Agregar longitudes para poder ordenar
-agregar_longitud(Sublista, Longitud-Sublista) :- 
-    length(Sublista, Longitud).
+% Agregar longitud del camino para poder ordenar
+agregarlongitud(Elem, L-Elem) :- 
+    length(Elem, L).
 
-% Recuperar lista original
-quitar_longitud(_-Sublista, Sublista).
+% Recuperar camino original.
+quitarlongitud(_-Elem, Elem).
 
 % Ordeno las soluciones segun la cantidad de pasos que hicieron
-ordenar_por_longitud(ListaDeListas, ListaOrdenada) :-
-    maplist(agregar_longitud, ListaDeListas, ListaConLongitud),
-    sort(1, @=<, ListaConLongitud, ListaOrdenadaConLongitud),
-    maplist(quitar_longitud, ListaOrdenadaConLongitud, ListaOrdenada).
+ordenar_por_longitud(Camino, CaminoOrdenado) :-
+
+    maplist(agregarlongitud, Camino, CaminoConLongitud),
+    sort(1, @=<, CaminoConLongitud, CaminoOrdenadoConLongitud),
+    maplist(quitarlongitud, CaminoOrdenadoConLongitud, CaminoOrdenado).
 
 camino2(I,I,_,[]).
+% Consigo todas las soluciones, las ordeno por cantidad de pasos creciente y las voy dando.
 camino2(I,F,T,[I|C]):- findall(X,caminoValido(I,F,T,[I],X),L), ordenar_por_longitud(L,LS) , member(C,LS).
 
 %% 6.1. Analizar la reversibilidad de los parámetros Inicio y Camino justificando adecuadamente en
 %% cada caso por qué el predicado se comporta como lo hace.
 
+% ...
 
 %% Ejercicio 7
 %% caminoOptimo(+Inicio, +Fin, +Tablero, -Camino) será verdadero cuando Camino sea un
@@ -133,17 +105,22 @@ caminoOptimo(I,F,T,C):- camino(I,F,T,C), not((camino(I,F,T,C1) ,length(C,A),leng
 %% caminoDual(+Inicio, +Fin, +Tablero1, +Tablero2, -Camino) será verdadero
 %% cuando Camino sea un camino desde Inicio hasta Fin pasando al mismo tiempo
 %% sólo por celdas transitables de ambos tableros.
+
 caminoDual(I, F , T1 , T2 , C):- camino(I,F,T1,C) , camino(I,F,T2,C).
-
-
-
-/* comento todo 
-
-
 
 %%%%%%%%
 %% TESTS
 %%%%%%%%
+
+%% Tableros para usar
+tablero(ej5x5, T) :- tablero(5, 5, T),ocupar(pos(1, 1), T),ocupar(pos(1, 2), T).
+tablero(libre20, T) :- tablero(20, 20, T).
+%Para probar con ej5x5 en caminoDual
+tablero(ejunasol, T) :- tablero(5, 5, T),ocupar(pos(0, 2), T),ocupar(pos(2,1), T),ocupar(pos(3,1), T),ocupar(pos(3,2), T),ocupar(pos(3,3), T).
+tablero(ejsinsol, T) :- tablero(5, 5, T),ocupar(pos(0, 2), T),ocupar(pos(1,0),T).
+tablero(ejcuatrosol, T) :- tablero(5, 5, T),ocupar(pos(0, 2), T),ocupar(pos(2,2), T),ocupar(pos(3,2), T),ocupar(pos(3,3), T).
+
+
 
 cantidadTestsTablero(2). % Actualizar con la cantidad de tests que entreguen
 testTablero(1) :- tablero(0,0,[]).
@@ -154,13 +131,24 @@ cantidadTestsVecino(1). % Actualizar con la cantidad de tests que entreguen
 testVecino(1) :- vecino(pos(0,0), [[_,_]], pos(0,1)).
 % Agregar más tests
 
-cantidadTestsCamino(0). % Actualizar con la cantidad de tests que entreguen
+cantidadTestsCamino(1). % Actualizar con la cantidad de tests que entreguen
+testCamino(1) :- tablero(ej5x5, T), camino2(pos(0,0), pos(2,3), T, _).
 % Agregar más tests
 
-cantidadTestsCaminoOptimo(0). % Actualizar con la cantidad de tests que entreguen
+cantidadTestsCaminoOptimo(1). % Actualizar con la cantidad de tests que entreguen
+testCaminoOptimo(1) :- tablero(ej5x5, T), caminoOptimo(pos(0,0), pos(2,3), T, _).
+
 % Agregar más tests
 
-cantidadTestsCaminoDual(0). % Actualizar con la cantidad de tests que entreguen
+cantidadTestsCaminoDual(3). % Actualizar con la cantidad de tests que entreguen
+
+%Test un camino posible
+testCaminoDual(1) :- tablero(ej5x5, T),tablero(ejunasol,T2), caminoDual(pos(0,0), pos(4,3), T,T2, _).
+%Test camino sin solucion
+testCaminoDual(2) :- not( ( tablero(ej5x5, T),tablero(ejsinsol,T2), caminoDual(pos(0,0), pos(4,3), T,T2, _) ) ).
+%Test camino con cuatro soluciones
+testCaminoDual(3) :- tablero(ej5x5, T),tablero(ejcuatrosol,T2), caminoDual(pos(0,0), pos(4,3), T,T2, _).
+
 % Agregar más tests
 
 tests(tablero) :- cantidadTestsTablero(M), forall(between(1,M,N), testTablero(N)).
@@ -178,4 +166,3 @@ tests(todos) :-
 
 tests :- tests(todos).
 
-*/
