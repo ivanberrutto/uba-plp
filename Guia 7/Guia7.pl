@@ -1,3 +1,27 @@
+%% Ejercicio 1
+
+padre(juan, carlos).
+padre(juan, luis).
+padre(carlos, daniel).
+padre(carlos, diego).
+padre(luis, pablo).
+padre(luis, manuel).
+padre(luis, ramiro).
+abuelo(X,Y) :- padre(X,Z), padre(Z,Y). 
+hijo(X,Y) :- padre(Y,X).
+hermano(X,Y) :- padre(Z,X) , padre(Z,Y).
+descendiente(X,Y) :- hijo(X,Y).
+descendiente(X,Y) :- hijo(X,Z) , descendiente(Z,Y) .
+
+
+%% Ejercicio 4
+
+% juntar(?Lista1,?Lista2,?Lista3)
+juntar([],Lista2,Lista2).
+juntar([X|T1],Lista2,[X|T3]) :- juntar(T1,Lista2,T3).
+
+%% Ejercicio 5
+
 %% last(?L, ?U), donde U es el último elemento de la lista L
 last([ X ], X).
 last((_|T),Y) :- last(T,Y).
@@ -34,3 +58,19 @@ sublista(X,Y) :- append(Z,_,Y) , append(_,X,Z) .
 %pertenece(X,[X]).
 pertenece(X,[X|_]).
 pertenece(Y,[_|XS]) :- pertenece(Y,XS).
+
+
+% Ejercicio 6
+
+aplanar([],[]).
+aplanar([ [] | T ], Res) :-
+	aplanar(T, Res).
+aplanar([ [X | T1 ] | T ], Res) :-
+	aplanar([ X | T1 ], Y),
+	aplanar(T, RecT),
+	append(Y, RecT, Res).
+aplanar([ X | T ], [X | Res]) :-
+	not(is_list(X)),
+	aplanar(T, Res).
+
+
