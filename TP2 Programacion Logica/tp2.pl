@@ -6,6 +6,7 @@
 %% tablero(+Filas,+Columnas,-Tablero) instancia una estructura de tablero en blanco
 %% de Filas x Columnas, con todas las celdas libres.
 
+% lista(+Largo,-Lista)
 lista(0,[]).
 lista(N,[X|XS]):- length([X|XS], N), lista(Z ,XS) , X= _ , Z is N-1 .
 
@@ -16,6 +17,7 @@ tablero(F,C,[X|XS]):- length([X|XS],F) , tablero(F1 , C , XS) , X = X1 , lista(C
 %% Ejercicio 2
 %% ocupar(+Pos,?Tablero) será verdadero cuando la posición indicada esté ocupada.
 
+% elementoTablero(+Pos,?Tablero,?Elemento)
 elementoTablero(pos(0,0),[[X|_]|_],X).
 elementoTablero(pos(0,C),[[_|XS]|YS],E):- 0 \= C , C1 is C-1 , elementoTablero(pos(0,C1),[XS|YS],E) .
 elementoTablero(pos(F,C),[_|XS],E):- 0 \= F ,  F1 is F-1 , elementoTablero(pos(F1,C),XS,E).
@@ -53,6 +55,7 @@ vecinoLibre(pos(X,Y),[T|Ts],V) :- vecino(pos(X,Y),[T|Ts],V) , elementoTablero(V,
 %% todas las alternativas eventualmente.
 %% Consejo: Utilizar una lista auxiliar con las posiciones visitadas
 
+% caminoValido(+Inicio,+Fin,+Tablero,+Visitados,-Camino)
 caminoValido(F,F,_,V,[]):- length(V,X) , X = 1.
 caminoValido(F,F,_,_,[]).
 caminoValido(I,F,T,V,[P|C]):- not(I=F),vecinoLibre(I,T,P),not(member(P,V)),caminoValido(P,F,T,[P|V],C).
@@ -69,14 +72,19 @@ camino(I,F,T,[I|C]):- caminoValido(I,F,T,[I],C).
 %% se instancien en orden creciente de longitud.
 
 % Agregar longitud del camino para poder ordenar
+
+% agregarlongitud(+Elem,-Largo-Elem)
 agregarlongitud(Elem, L-Elem) :- 
     length(Elem, L).
 
 % Recuperar camino original.
+% quitarlongitud(+Largo-Elem,-Elem)
 quitarlongitud(_-Elem, Elem).
 
 % Ordeno las soluciones segun la cantidad de pasos que hicieron
-ordenar_por_longitud(Camino, CaminoOrdenado) :-
+
+% ordenarporlongitud(+Camino, -CaminoOrdenado)
+ordenarporlongitud(Camino, CaminoOrdenado) :-
 
     maplist(agregarlongitud, Camino, CaminoConLongitud),
     sort(1, @=<, CaminoConLongitud, CaminoOrdenadoConLongitud),
@@ -84,7 +92,7 @@ ordenar_por_longitud(Camino, CaminoOrdenado) :-
 
 camino2(I,I,_,[]).
 % Consigo todas las soluciones, las ordeno por cantidad de pasos creciente y las voy dando.
-camino2(I,F,T,[I|C]):- findall(X,caminoValido(I,F,T,[I],X),L), ordenar_por_longitud(L,LS) , member(C,LS).
+camino2(I,F,T,[I|C]):- findall(X,caminoValido(I,F,T,[I],X),L), ordenarporlongitud(L,LS) , member(C,LS).
 
 %% 6.1. Analizar la reversibilidad de los parámetros Inicio y Camino justificando adecuadamente en
 %% cada caso por qué el predicado se comporta como lo hace.
