@@ -97,6 +97,18 @@ altura(bin(IZQ,_,DER),N) :- altura(IZQ,NI) , altura(DER,ND) , N is max(NI,ND) + 
 cantidadDeNodos(nil,0).
 cantidadDeNodos(bin(IZQ,_,DER),N):- cantidadDeNodos(IZQ,NI) , cantidadDeNodos(DER,ND) , N is NI + ND + 1.
 
+
+% Ejercicio 13
+
+% inorder(+AB,-Lista)
+
+inorder(nil,[]).
+inorder(bin(IZQ,R,DER),L) :- inorder(IZQ,LI) , inorder(DER, LR) , append(LI,[R],L1) , append(L1,LR,L) .
+
+
+
+
+
 % ejemplo : altura(bin(bin(bin(nil,2,nil),4,nil),5,bin(nil,6,nil)),X).
 
 % Ejercicio 15
