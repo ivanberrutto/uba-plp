@@ -93,7 +93,9 @@ raiz(bin(_, V, _),V).
 
 altura(nil,0).
 altura(bin(IZQ,_,DER),N) :- altura(IZQ,NI) , altura(DER,ND) , N is max(NI,ND) + 1 .
-
+	
+cantidadDeNodos(nil,0).
+cantidadDeNodos(bin(IZQ,_,DER),N):- cantidadDeNodos(IZQ,NI) , cantidadDeNodos(DER,ND) , N is NI + ND + 1.
 
 % ejemplo : altura(bin(bin(bin(nil,2,nil),4,nil),5,bin(nil,6,nil)),X).
 
