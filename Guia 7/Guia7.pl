@@ -74,3 +74,58 @@ aplanar([ X | T ], [X | Res]) :-
 	aplanar(T, Res).
 
 
+% Ejercicio 7
+
+%i. intersección(+L1, +L2, -L3)
+
+
+%interseccionAux([L1H|L1T],L2,L3,V):- member(L1H,L2), member(L1H,L3) , not(member(L1H,V)) , interseccionAux (L1H,L2,L3,[L3H|V]).
+%interseccion(L1,L2,L3):-interseccionAux(L1,L2,L3,[]).
+
+
+% Ejercicio 12
+
+% bin(izq, v, der),
+vacio(nil).
+
+raiz(bin(_, V, _),V).
+
+
+altura(nil,0).
+altura(bin(IZQ,_,DER),N) :- altura(IZQ,NI) , altura(DER,ND) , N is max(NI,ND) + 1 .
+
+
+% ejemplo : altura(bin(bin(bin(nil,2,nil),4,nil),5,bin(nil,6,nil)),X).
+
+% Ejercicio 15
+
+desde2(X,X).
+desde2(X,Y) :- var(Y), N is X+1, desde2(N,Y).
+desde2(X,Y) :- nonvar(Y), X < Y.
+todasLasFilasSumanLoMismo(XS) :- not((member(E1,XS), member(E2,XS) , E1 \= E2 , sumlist(E1,N1) , sumlist(E2,N2) , N1 \= N2 )).
+
+cuadradoLat(N,M):- desde2(0,P), matrices(N,P,N,M).
+
+matrices(_,_,0,[]).
+matrices(N,P,C,[L|M]):- C > 0, generarLista(N,P,L) ,Y is C-1, matrices(N,P,Y,M).
+
+generarLista(0,0 ,[]).
+generarLista(N,P ,[X|XS]) :-
+    N > 0, P >= 0,
+    between(0, P, X),
+    R is P - X, Y is N-1,
+    generarLista(Y,R,XS).
+
+%ahora con generate and test.
+generarLista1(0,_ ,[]).
+generarLista1(N,P ,[X|XS]) :-
+    N > 0, P >= 0,
+    between(0, P, X),
+     Y is N-1,
+    generarLista1(Y,P,XS).
+
+cuadradoLat1(0,[]).
+cuadradoLat1(N,M):- desde2(0,P), matrices1(N,P,N,M) , todasLasFilasSumanLoMismo(M).
+
+matrices1(_,_,0,[]).
+matrices1(N,P,C,[L|M]):- C > 0, generarLista1(N,P,L),Y is C-1, matrices1(N,P,Y,M).
