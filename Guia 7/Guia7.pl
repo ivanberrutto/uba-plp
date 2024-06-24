@@ -97,19 +97,40 @@ altura(bin(IZQ,_,DER),N) :- altura(IZQ,NI) , altura(DER,ND) , N is max(NI,ND) + 
 cantidadDeNodos(nil,0).
 cantidadDeNodos(bin(IZQ,_,DER),N):- cantidadDeNodos(IZQ,NI) , cantidadDeNodos(DER,ND) , N is NI + ND + 1.
 
+% ejemplo : funcion(bin(bin(bin(nil,2,nil),4,nil),5,bin(nil,6,nil)),X).
 
 % Ejercicio 13
 
 % inorder(+AB,-Lista)
 
 inorder(nil,[]).
-inorder(bin(IZQ,R,DER),L) :- inorder(IZQ,LI) , inorder(DER, LR) , append(LI,[R],L1) , append(L1,LR,L) .
+inorder(bin(IZQ,R,DER),L) :- inorder(IZQ,LI) , inorder(DER, LR) , append(LI,[R],L1) , append(L1,LR,L).
+
+/*
+% arbolConInorder(+Lista,-AB)
+arbolConInorder([], nil).
+arbolConInorder([LH|LT], bin(IZQ,R,DER)) :- ground(R),arbolConInorder([LH|LT],IZQ).
+arbolConInorder([LH|LT], bin(IZQ,LH,DER)) :- arbolConInorder(LT,DER).
+%arbolConInorder([LH|LT], bin(IZQ,R,DER)) :- member(R,LT),arbolConInorder([LH|LT],IZQ).
 
 
+arbolConInorder([], nil).
+arbolConInorder(LH, bin(nil,LH,nil)).
+arbolConInorder([LH|LT], bin(nil,LH,DER)) :-arbolConInorder(LT,DER).
+arbolConInorder([LH|LT], bin(IZQ,R,nil)) :- arbolConInorder([LH|LT],IZQ).
+arbolConInorder([LH|LT], bin(IZQ,LH,DER)) :- arbolConInorder(LT,IZQ) .
+arbolConInorder([LH|LT], bin(IZQ,R,DER)) :- arbolConInorder([LH|LT],DER) .
+*/
+% ejemplo : arbolConInorder([2, 4, 5, 6],X).
+
+% aBB(+T)
 
 
-
-% ejemplo : altura(bin(bin(bin(nil,2,nil),4,nil),5,bin(nil,6,nil)),X).
+aBB(nil).
+aBB(bin(nil,_,nil)).
+aBB(bin(IZQ,R,nil)) :- raiz(IZQ,RI) , R >= RI , aBB(IZQ).
+aBB(bin(nil,R,DER)):- raiz(DER,RD) , R =< RD , aBB(DER).
+aBB(bin(IZQ,R,DER)):- raiz(IZQ,RI) , raiz(DER,RD) , R >= RI , R =< RD , aBB(IZQ) , aBB(DER).
 
 % Ejercicio 15
 
