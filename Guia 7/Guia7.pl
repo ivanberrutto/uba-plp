@@ -132,6 +132,14 @@ aBB(bin(IZQ,R,nil)) :- raiz(IZQ,RI) , R >= RI , aBB(IZQ).
 aBB(bin(nil,R,DER)):- raiz(DER,RD) , R =< RD , aBB(DER).
 aBB(bin(IZQ,R,DER)):- raiz(IZQ,RI) , raiz(DER,RD) , R >= RI , R =< RD , aBB(IZQ) , aBB(DER).
 
+% ejemplo aBB(bin(bin(bin(nil,2,bin(nil,3,nil)),4,nil),5,bin(nil,6,nil))).
+
+% aBBInsertar(+X, +T1, -T2)
+aBBInsertar(X,nil,bin(nil,X,nil)).
+%aBBInsertar(X,bin(IZQ,X,DER),bin(IZQ,X,DER)). % por si son iguales , aunque no hace falta
+aBBInsertar(X,bin(IZQ,R,DER),bin(IZQ2,R,DER)) :- X < R , aBBInsertar(X,IZQ,IZQ2).
+aBBInsertar(X,bin(IZQ,R,DER),bin(IZQ,R,DER2)) :- X > R , aBBInsertar(X,DER,DER2).
+
 % Ejercicio 15
 
 desde2(X,X).
