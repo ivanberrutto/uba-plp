@@ -59,7 +59,7 @@ vecinoLibre(pos(X,Y),[T|Ts],V) :- vecino(pos(X,Y),[T|Ts],V) , elementoTablero(V,
 caminoValido(F,F,_,V,[]):- length(V,X) , X = 1.
 caminoValido(F,F,_,_,[]).
 caminoValido(I,F,T,V,[P|C]):- not(I=F),vecinoLibre(I,T,P),not(member(P,V)),caminoValido(P,F,T,[P|V],C).
-camino(I,I,_,[]).
+%camino(I,I,_,[]).
 camino(I,F,T,[I|C]):- caminoValido(I,F,T,[I],C).
 
 %% 5.1. Analizar la reversibilidad de los parámetros Fin y Camino justificando adecuadamente en cada
@@ -71,28 +71,19 @@ camino(I,F,T,[I|C]):- caminoValido(I,F,T,[I],C).
 %% camino2(+Inicio, +Fin, +Tablero, -Camino) ídem camino/4 pero que las soluciones
 %% se instancien en orden creciente de longitud.
 
-% Agregar longitud del camino para poder ordenar
+% desdeHasta(+Inicio , +Fin , -X)
+desdeHasta(I, F, I) :- I =< F.
+desdeHasta(I, F, X) :- I < F , S is I + 1, desdeHasta(S, F, X).
 
-% agregarlongitud(+Elem,-Largo-Elem)
-agregarlongitud(Elem, L-Elem) :- 
-    length(Elem, L).
+% desdeMenoresCaminos(+Tablero, -Camino)
+desdeMenoresCaminos([TH|TT],C) :- length([TH|TT],LargoFila) ,  
+                                  length(TH,LargoCol) ,
+                                  FC is LargoFila*LargoCol , 
+                                  desdeHasta(0,FC,L) ,
+                                  length(C,L).
 
-% Recuperar camino original.
-% quitarlongitud(+Largo-Elem,-Elem)
-quitarlongitud(_-Elem, Elem).
-
-% Ordeno las soluciones segun la cantidad de pasos que hicieron
-
-% ordenarporlongitud(+Camino, -CaminoOrdenado)
-ordenarporlongitud(Camino, CaminoOrdenado) :-
-
-    maplist(agregarlongitud, Camino, CaminoConLongitud),
-    sort(1, @=<, CaminoConLongitud, CaminoOrdenadoConLongitud),
-    maplist(quitarlongitud, CaminoOrdenadoConLongitud, CaminoOrdenado).
-
-camino2(I,I,_,[]).
-% Consigo todas las soluciones, las ordeno por cantidad de pasos creciente y las voy dando.
-camino2(I,F,T,[I|C]):- findall(X,caminoValido(I,F,T,[I],X),L), ordenarporlongitud(L,LS) , member(C,LS).
+%camino2(I,I,_,[]).
+camino2(I,F,T,[I|C]):- desdeMenoresCaminos(T,[I|C]), caminoValido(I,F,T,[I],C).
 
 %% 6.1. Analizar la reversibilidad de los parámetros Inicio y Camino justificando adecuadamente en
 %% cada caso por qué el predicado se comporta como lo hace.
@@ -104,6 +95,9 @@ camino2(I,F,T,[I|C]):- findall(X,caminoValido(I,F,T,[I],X),L), ordenarporlongitu
 %% camino óptimo sobre Tablero entre Inicio y Fin. Notar que puede no ser único.
 
 caminoOptimo(I,F,T,C):- camino(I,F,T,C), not((camino(I,F,T,C1) ,length(C,A),length(C1,B),B<A)).
+
+%% En caminoOptimo utilizamos estrategia Generate and Test, ya que instanciamos todos los caminos posibles 
+%% y luego podemos verificar que sean uno de los caminos con la menor longitud de pasos posible.
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 %% Tableros simultáneos
