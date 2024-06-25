@@ -65,6 +65,12 @@ camino(I,F,T,[I|C]):- caminoValido(I,F,T,[I],C).
 %% 5.1. Analizar la reversibilidad de los parámetros Fin y Camino justificando adecuadamente en cada
 %% caso por qué el predicado se comporta como lo hace
 
+
+%% caso por qué el predicado se comporta como lo hace
+
+% Analizando la reversibilidad de F, si F no viene instanciada (es una variable libre) unificara con la primrera _guarda_ de camino valido, como prolog prueba todas las guardas, al entrar en la siguiente ya no unifica, porque "not(_= F)" retornara siempre False. 
+% al no estar instanciada not (_ = F) daria siempre false lo que generaria que 
+%no entre en la segunda guarda
 % ...
 
 %% Ejercicio 6
