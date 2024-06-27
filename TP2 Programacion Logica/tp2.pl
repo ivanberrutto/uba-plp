@@ -75,12 +75,13 @@ camino(I,F,T,[I|C]):- caminoValido(I,F,T,[I],C).
 desdeHasta(I, F, I) :- I =< F.
 desdeHasta(I, F, X) :- I < F , S is I + 1, desdeHasta(S, F, X).
 
+% desdeHasta(+Tablero , -Largo)
+largoTablero([TH|TT],L) :- length([TH|TT],F) , length(TH,C) , L is F*C.
+
 % desdeMenoresCaminos(+Tablero, -Camino)
-desdeMenoresCaminos([TH|TT],C) :- length([TH|TT],LargoFila) ,  
-                                  length(TH,LargoCol) ,
-                                  FC is LargoFila*LargoCol , 
-                                  desdeHasta(0,FC,L) ,
-                                  length(C,L).
+desdeMenoresCaminos(T,C) :- largoTablero(T,F),
+                            desdeHasta(0,F,L),
+                            length(C,L).
 
 %camino2(I,I,_,[]).
 camino2(I,F,T,[I|C]):- desdeMenoresCaminos(T,[I|C]), caminoValido(I,F,T,[I],C).
