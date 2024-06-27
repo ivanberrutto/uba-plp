@@ -56,7 +56,6 @@ vecinoLibre(pos(X,Y),[T|Ts],V) :- vecino(pos(X,Y),[T|Ts],V) , elementoTablero(V,
 %% Consejo: Utilizar una lista auxiliar con las posiciones visitadas
 
 % caminoValido(+Inicio,+Fin,+Tablero,+Visitados,-Camino)
-caminoValido(F,F,_,V,[]):- length(V,X) , X = 1.
 caminoValido(F,F,_,_,[]).
 caminoValido(I,F,T,V,[P|C]):- not(I=F),vecinoLibre(I,T,P),not(member(P,V)),caminoValido(P,F,T,[P|V],C).
 %camino(I,I,_,[]).
@@ -65,28 +64,24 @@ camino(I,F,T,[I|C]):- caminoValido(I,F,T,[I],C).
 %% 5.1. Analizar la reversibilidad de los parámetros Fin y Camino justificando adecuadamente en cada
 %% caso por qué el predicado se comporta como lo hace
 
+% Analizando la reversibilidad de F, F al no venir instanciada unificara con la primera linea de camino valido, 
+% pero al solicitar otra solución en la siguiente linea ya no unificará, 
+% ya que "not(_ = F)" retornara siempre False. Por lo tanto, F no es reversible
 
-%% caso por qué el predicado se comporta como lo hace
-
-% Analizando la reversibilidad de F, si F no viene instanciada (es una variable libre) unificara con la primrera _guarda_ de camino valido, como prolog prueba todas las guardas, al entrar en la siguiente ya no unifica, porque "not(_= F)" retornara siempre False. 
-% al no estar instanciada not (_ = F) daria siempre false lo que generaria que 
-%no entre en la segunda guarda
-% ...
+%  En el caso de C, si esta instanciado, va a dar True si cada elemento efectivamente cumple con las condiciones que cada posicion del
+%  tiene que cumplir en un camino valido, y que empieza y termine donde lo tiene que cumplir. Caso contrario da false
+%  Por lo tanto C es reversible
 
 %% Ejercicio 6
 %% camino2(+Inicio, +Fin, +Tablero, -Camino) ídem camino/4 pero que las soluciones
 %% se instancien en orden creciente de longitud.
-
-% desdeHasta(+Inicio , +Fin , -X)
-desdeHasta(I, F, I) :- I =< F.
-desdeHasta(I, F, X) :- I < F , S is I + 1, desdeHasta(S, F, X).
 
 % desdeHasta(+Tablero , -Largo)
 largoTablero([TH|TT],L) :- length([TH|TT],F) , length(TH,C) , L is F*C.
 
 % desdeMenoresCaminos(+Tablero, -Camino)
 desdeMenoresCaminos(T,C) :- largoTablero(T,F),
-                            desdeHasta(0,F,L),
+                            between(0,F,L),
                             length(C,L).
 
 %camino2(I,I,_,[]).
@@ -95,7 +90,11 @@ camino2(I,F,T,[I|C]):- desdeMenoresCaminos(T,[I|C]), caminoValido(I,F,T,[I],C).
 %% 6.1. Analizar la reversibilidad de los parámetros Inicio y Camino justificando adecuadamente en
 %% cada caso por qué el predicado se comporta como lo hace.
 
-% ...
+% Cuando I si viene instanciada, ocurre un caso parecido al de F en camino, ya que unifica en el caso donde I es igual que F, 
+% pero luego al pedir la siguiente solucion da false por el "not(_ = I)". Entonces, I no es reversible.
+
+% En C tambien es analogo al C de 5.1 , ya que devuelve True si cada elemento cumple las condiciones. En caso contrario da false.
+% Por lo tanto C es reversible
 
 %% Ejercicio 7
 %% caminoOptimo(+Inicio, +Fin, +Tablero, -Camino) será verdadero cuando Camino sea un
@@ -124,33 +123,62 @@ caminoDual(I, F , T1 , T2 , C):- camino(I,F,T1,C) , camino(I,F,T2,C).
 %% Tableros para usar
 tablero(ej5x5, T) :- tablero(5, 5, T),ocupar(pos(1, 1), T),ocupar(pos(1, 2), T).
 tablero(libre20, T) :- tablero(20, 20, T).
+tablero(ejpos0Tapada,T) :- tablero(5, 5, T),ocupar(pos(1, 0), T),ocupar(pos(0, 1), T),ocupar(pos(1, 1), T).
+
 %Para probar con ej5x5 en caminoDual
 tablero(ejunasol, T) :- tablero(5, 5, T),ocupar(pos(0, 2), T),ocupar(pos(2,1), T),ocupar(pos(3,1), T),ocupar(pos(3,2), T),ocupar(pos(3,3), T).
 tablero(ejsinsol, T) :- tablero(5, 5, T),ocupar(pos(0, 2), T),ocupar(pos(1,0),T).
 tablero(ejcuatrosol, T) :- tablero(5, 5, T),ocupar(pos(0, 2), T),ocupar(pos(2,2), T),ocupar(pos(3,2), T),ocupar(pos(3,3), T).
 
 
-
-cantidadTestsTablero(2). % Actualizar con la cantidad de tests que entreguen
+cantidadTestsTablero(4). % Actualizar con la cantidad de tests que entreguen
+% Caso ejemplo inicial
 testTablero(1) :- tablero(0,0,[]).
 testTablero(2) :- ocupar(pos(0,0), [[ocupada]]).
-% Agregar más tests
+% Caso Tablero 3x3
+testTablero(3) :- tablero(3,3,[[_,_,_],[_,_,_],[_,_,_]]). 
+% Caso tablero con pos 2x2 ocupada.
+testTablero(4) :- ocupar(pos(2,2),[_, _, [_, _, ocupada ,_],_] ).
 
-cantidadTestsVecino(1). % Actualizar con la cantidad de tests que entreguen
+
+cantidadTestsVecino(4). % Actualizar con la cantidad de tests que entreguen
+% Caso ejemplo inicial
 testVecino(1) :- vecino(pos(0,0), [[_,_]], pos(0,1)).
-% Agregar más tests
+% Caso solo un vecino ocupado
+testVecino(2) :- vecino(pos(1,0), [[_,_,ocupada],[_,_,ocupada],[_,_,_]] , _ ). 
+% Caso rodeado de ocupados
+testVecino(3) :- not(vecinoLibre(pos(1,1),[[_,ocupada],[ocupada,_],[_,ocupada]],_)). 
+% Caso solo un vecino libre
+testVecino(4) :- vecinoLibre(pos(1,1),[[_,ocupada],[_,_],[_,ocupada]],_). 
 
-cantidadTestsCamino(1). % Actualizar con la cantidad de tests que entreguen
+
+cantidadTestsCamino(7). % Actualizar con la cantidad de tests que entreguen
+% Ejemplo inicial
 testCamino(1) :- tablero(ej5x5, T), camino2(pos(0,0), pos(2,3), T, _).
-% Agregar más tests
+% Test de camino con Inicio fuera del tablero
+testCamino(2) :- not( (tablero(ej5x5, T), camino2(pos(8,0), pos(2,3), T,_)) ).
+% Test de camino con Inicio tapado
+testCamino(3) :- not( (tablero(ejpos0Tapada, T), camino2(pos(0,0),pos(2,3), T,_)) ).
+% Test de camino con Final tapado
+testCamino(4) :- not( (tablero(ejpos0Tapada, T), camino2(pos(2,3),pos(0,0), T,_)) ).
+% Test Reversibilidad de C con camino valido
+testCamino(5):-tablero(ej5x5, T), camino2(pos(0,0), pos(2,3), T ,[pos(0, 0), pos(1, 0), pos(2, 0), pos(2, 1), pos(2, 2), pos(2, 3)]).
+% Test Reversibilidad de C con camino que no comienza en Inicio.
+testCamino(6):- not( (tablero(ej5x5, T), camino2(pos(0,0), pos(2,3), T,[pos(0, 1), pos(0, 0), pos(1, 0), pos(2, 0), pos(2, 1), pos(2,2),pos(2, 3)])) ).
+% Test Reverisibilidad de C con camino que pasa por ocupada.
+testCamino(7):-not( (tablero(ej5x5, T), camino2(pos(0,0), pos(2,3), T,[pos(0, 0), pos(1, 0), pos(1, 1), pos(2, 1), pos(2, 2), pos(2, 3)])) ).
 
-cantidadTestsCaminoOptimo(1). % Actualizar con la cantidad de tests que entreguen
+
+
+cantidadTestsCaminoOptimo(3). % Actualizar con la cantidad de tests que entreguen
+% Test de dos caminos optimos
 testCaminoOptimo(1) :- tablero(ej5x5, T), caminoOptimo(pos(0,0), pos(2,3), T, _).
-
-% Agregar más tests
+% Test un camino optimo recto
+testCaminoOptimo(2) :- tablero(ej5x5, T), caminoOptimo(pos(0,0), pos(4,0), T, _).
+% Test sin camino optimo
+testCaminoOptimo(3) :- not(( tablero(ejpos0Tapada, T), caminoOptimo(pos(4,0), pos(0,0), T, _) )).
 
 cantidadTestsCaminoDual(3). % Actualizar con la cantidad de tests que entreguen
-
 %Test un camino posible
 testCaminoDual(1) :- tablero(ej5x5, T),tablero(ejunasol,T2), caminoDual(pos(0,0), pos(4,3), T,T2, _).
 %Test camino sin solucion
