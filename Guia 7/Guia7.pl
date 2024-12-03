@@ -172,3 +172,16 @@ cuadradoLat1(N,M):- desde2(0,P), matrices1(N,P,N,M) , todasLasFilasSumanLoMismo(
 
 matrices1(_,_,0,[]).
 matrices1(N,P,C,[L|M]):- C > 0, generarLista1(N,P,L),Y is C-1, matrices1(N,P,Y,M).
+
+% Parcial 1er cuat 2023
+
+% palabra(+A,+N,-P)
+palabra(_,0,[]).
+palabra(A,N,[PH|PT]) :- N > 0 , I is N-1 , member(PH,A) , palabra(A,I,PT).
+
+%frase(+A,-F).
+
+generarFrases(_,0,[]).
+generarFrases(A,P,[X|XS]):- between(1,P,Na), palabra(A,Na,X), S2 is P-Na, generarFrases(A,S2,XS).
+
+frase(A,F) :- desde2(0,P), generarFrases(A,P,F).

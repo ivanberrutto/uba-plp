@@ -112,11 +112,10 @@ foldAEB cHoja cBin arbol = case arbol of
     Bin i r d -> cBin (rec i) r (rec d)
   where rec = foldAEB cHoja cBin 
 
-
 cantNodos :: AEB a -> Int
 cantNodos = foldAEB (const 1) (\ri _ rd -> 1 + ri + rd)
 
-sumatoriaArbol :: aeb Int -> Int
+sumatoriaArbol :: AEB Int -> Int
 sumatoriaArbol = foldAEB id (\left r right -> left + r + right)
 
 
@@ -161,4 +160,3 @@ tamaño (Rose x hijos) = 1 + sum (map tamaño hijos)
 
 foldRT :: (a -> [b] -> b) -> RoseTree a -> b
 foldRT f (Rose x hijos) = f x (map (foldRT f) hijos)
-

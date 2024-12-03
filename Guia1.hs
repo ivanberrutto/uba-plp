@@ -195,10 +195,10 @@ o recAB).
 data AB a = Nil | Bin (AB a) a (AB a)
 {-
 foldAB ::  b -> (b -> a -> b -> b) -> AB a -> b
-foldAB cNil cAB arbol = case arbol of
+foldAB cAB cNil arbol = case arbol of
 	Nil -> cNil
 	Bin izq r der -> cAB (rec izq) r (rec der)
-	where rec = foldAB cNil cAB 
+	where rec = foldAB cAB cNil
 -}
 recAB :: (a -> AB -> AB -> b) -> b -> AB -> b 
 recAB f1 f2 arbol = case arbol of
@@ -208,3 +208,79 @@ recAB f1 f2 arbol = case arbol of
 
 foldAB :: (a -> b -> b -> b) -> b -> AB a -> b 
 foldAB f1 f2 = recAB (\a _ _ -> f1 a) f2
+
+esNil :: AB a -> Bool
+esNil = foldAB (\_ _ _ -> False) True
+
+cantNodos :: AB a -> Int 
+cantNodos = foldAB(\_ izq der -> 1 + izq + der) (const 0)
+
+altura :: AB a -> Int
+altura = foldAB(\_ izq der -> 1 + if izq >= der then izq else der ) (const 0)
+-- max izq der
+
+{-
+Denir la función mejorSegún :: (a -> a -> Bool) -> AB a -> a, análoga a la del ejercicio 3, para árboles.
+Se recomienda denir una función auxiliar para comparar la raíz con un posible resultado de la recursión
+para un árbol que puede o no ser Nil.
+-}
+
+compararArbol :: (a -> a -> Bool) -> a ->  AB a -> b
+compararArbol f r a = foldAB (\ra izqa dera if (f r ra) then r else a) r
+
+mejorSegun :: (a -> a -> Bool) -> AB a -> a
+mejorSegun f = foldAB(\r izq der -> compararArbol (compararArbol f r izq) der )
+
+ recNave :: ( Componente -> NaveEspacial -> NaveEspacial -> a -> a -> a)
+ -> ( Componente -> a ) -> NaveEspacial -> a
+
+ recNave f1 f2 n = case n of
+ 	Modulo c n1 n2 -> f1 c n1 n2 ( rec n2 )( rec n1 ) 
+ 	Base c -> f2 c
+ where rec = recNave f1 f2
+
+ foldNave :: ( Componente -> a -> a -> a )
+ -> ( Componente -> a ) -> NaveEspacial -> a
+
+ foldNave f1 f2 = recNave (\ c _ _ -> f1 c ) f2
+
+esSubnavePropia :: NaveEspacial -> NaveEspacial -> Bool
+esSubnavePropia n1 = recNave (\ _ sn1 sn2 r1 r2 -> sn1 == n1 || sn2 == n1 || r1 || r2 ) ( const False )
+
+
+type Tono = Integer
+type Duracion = Integer
+
+data Melodia = Silencio Duracion | Nota Tono Duracion | Secuencia Melodia Melodia | Paralelo [Melodia]
+
+foldMelodia:: (Duracion -> m) -> (Tono -> Duracion -> m ) -> (m -> m -> m) -> ([m] -> m) -> Melodia -> m
+
+foldMelodia cSilencio cNota cSecuencia cParalelo m = case m of
+	Silencio duracionSil -> cSilencio duracionSil
+	Nota tono duracionNota -> cNota tono duracionNota
+	Secuencia mel1 mel2 -> cSecuencia ( rec mel1) (rec mel2)
+	Paralelo melLista -> cParalelo (map (rec melLista))
+	where rec = foldMelodia cSilencio cNota cSecuencia cParalelo
+
+duracionTotal m = foldMelodia id (\tono dur -> dur) (+) maximum 
+
+
+truncar =  foldMelodia (\m -> duracion -> case m of 
+	Silencio durSil  -> Silencio max(durSil,duracion)
+	Nota tono durNota-> Nota tono max(durNota,duracion)
+	Secuencia mel1 mel2 -> 
+	Paralelo melLista -> if duracionTotal m > 
+	)
+
+
+truncar = foldMelodia (\durSil -> duracion -> Silencio max(durSil,duracion)) (\tono durNota -> duracion -> Nota tono max(durNota,duracion))
+							   (\mel1 mel2 -> if fComparar mel1 duracion then (if fComparar mel2 d then Secuencia )) ()
+							   	where fComparar m d = if duracionTotal m > d then True else False
+
+{-
+foldAB ::  b -> (b -> a -> b -> b) -> AB a -> b
+foldAB cAB cNil arbol = case arbol of
+	Nil -> cNil
+	Bin izq r der -> cAB (rec izq) r (rec der)
+	where rec = foldAB cAB cNil
+-}
